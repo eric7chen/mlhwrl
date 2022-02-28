@@ -5,6 +5,7 @@ import numpy
 import typing
 import tqdm
 import random
+from matplotlib import pyplot as plt
 
 
 class Board(object):
@@ -189,11 +190,10 @@ class Agent(object):
         self.environment = environment
 
 
-def learn():
+def learn(iters):
     env = TicTacToe()
     playerOne = Agent(env)
     playerTwo = Agent(env)
-    iters = input("iterations?")
     episodes = range(int(iters))
     for i in episodes:
         playerOne_turn = True
@@ -248,18 +248,37 @@ def play(one, two, games):
                     twoWins += 1
                 else:
                     draws += 1
-                print(env.board)
+                # print(env.board)
                 env.reset()
                 break
-    return oneWins, twoWins, draws
+    return oneWins * 100.0 / games, twoWins * 100.0 / games, draws * 100.0 / games
 
 
 def main():
-    one, two = learn()
-    one.reset_explore()
-    two.reset_explore()
-    i, j, k = play(one, two, 500)
-    print(i, j, k)
+    ones = []
+    twos = []
+    draws = []
+    count = []
+    for i in range(0, 100, 5):
+        one, two = learn(i)
+        one.reset_explore()
+        two.reset_explore()
+        a, b, c = play(one, two, 1000)
+        ones.append(a)
+        twos.append(b)
+        draws.append(c)
+        count.append(i)
+
+    print(ones, twos, draws, count)
+    plt.plot(count, ones, color="red", label="Player One Win")
+    plt.plot(count, twos, color="green", label="Player Two Win")
+    plt.plot(count, draws, color="blue", label="Draw")
+    plt.xlabel("Training Iterations")
+    plt.ylabel("Outcome %")
+    plt.legend()
+    ax = plt.gca()
+    ax.set_ylim([0, 100.0])
+    plt.show()
 
 
 if __name__ == "__main__":
