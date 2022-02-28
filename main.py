@@ -185,6 +185,9 @@ class Agent(object):
     def reset_explore(self):
         self.exploration_rate = 0
 
+    def set_env(self, environment):
+        self.environment = environment
+
 
 def learn():
     env = TicTacToe()
@@ -212,8 +215,51 @@ def learn():
     return playerOne, playerTwo
 
 
+def play(one, two, games):
+    env = TicTacToe()
+    playerOne = one
+    playerTwo = two
+    playerOne.set_env(env)
+    playerTwo.set_env(env)
+    iters = games
+    first = True
+    oneWins = 0
+    twoWins = 0
+    draws = 0
+    env.reset()
+    for i in range(iters):
+        while True:
+            if first:
+                action, greedy = playerOne.action()
+                previous_state = env.board.hash()
+                reward, _, over = env.step(action)
+                current_state = env.board.hash()
+            else:
+                action, greedy = playerTwo.action()
+                previous_state = env.board.hash()
+                reward, _, over = env.step(action)
+                current_state = env.board.hash()
+            first = not first
+            # print(env.board)
+            if over:
+                if (reward == 1 and first) or (reward == -1 and not first):
+                    oneWins += 1
+                elif (reward == -1 and first) or (reward == 1 and not first):
+                    twoWins += 1
+                else:
+                    draws += 1
+                print(env.board)
+                env.reset()
+                break
+    return oneWins, twoWins, draws
+
+
 def main():
-    learn()
+    one, two = learn()
+    one.reset_explore()
+    two.reset_explore()
+    i, j, k = play(one, two, 500)
+    print(i, j, k)
 
 
 if __name__ == "__main__":
