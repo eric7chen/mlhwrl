@@ -16,12 +16,15 @@ class BenchmarkPlayer(Player):
             temp_board = board
             if temp_board.is_possible(i):
                 temp_board.take_turn(i)
-                over, winner = board.is_over()
+                over, winner = temp_board.is_over()
                 if over:
                     board.take_turn(i)
-                    return winner, temp_board, over
+                    over, winner = board.is_over()
+                    return winner, board, over
 
-        return possible_moves[0]
+        board.take_turn(possible_moves[0])
+        over, winner = board.is_over()
+        return winner, board, over
 
     def final_result(self, result: int):
         pass
