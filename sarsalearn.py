@@ -1,53 +1,51 @@
-import argparse
-import copy
-from hashlib import new
-from game.tic_tac_toe import Board
-from game.tic_tac_toe import TicTacToe
+from typing import Tuple, final
 from game.Player import Player
+from game.tic_tac_toe import Board
+
 import numpy as np
 
-# rewards for win, draw, and loss
 RES_WIN = 1.0
 RES_DRAW = 0.5
 RES_LOSS = 0.0
 
-
-class TDAgent(Player):
+class SarsaAgent(Player):
     def __init__(self,
-                 alpha: float =  0.1,
+                 alpha: float =  0.9,
                  gamma: float = 0.9,
                  epsilon: float = 0.1,
-                 v_init: float = 0.05) -> None:
+                 q_init: float = 0.6) -> None:
         self.side = None
         self.training: bool = True
-        # create table for each possible board state
-        self.vtable = np.empty([3 ** (3 ** 2 + 1)])
-        self.vtable.fill(v_init)
+
+        # create qtable for each possible board state
+        self.qtable = np.full((3 ** (3 ** 2 + 1), 9), q_init)
 
         self.history = []
         self.alpha: float = alpha
         self.gamma: float = gamma
         self.epsilon: float = epsilon
-        self.v_init = v_init
+        self.q_init = q_init
         super().__init__()
-    
+
+
     def get_move(self, board: Board) -> int:
         possible = board.possible_actions()
-
         # take random move epsilon % of the time
         if np.random.binomial(1, self.epsilon) and self.training:
             np.random.shuffle(possible)
             move = tuple(possible[0])
             return (3*move[0] + move[1])
         
-        # otherwise take best move from possible choices
-        copies = [copy.deepcopy(board) for i in possible]
-        for action, boardcopy in zip(possible, copies):
-            boardcopy.take_turn(tuple(action))
-        hashes = [boardcopy.hash() for boardcopy in copies]
-        move = tuple(possible[np.argmax(self.vtable[hashes])])
-        return (3*move[0] + move[1])
-    
+        #otherwise, take best action from qtable
+        board_hash = board.hash()
+        qvals = self.qtable[board_hash]
+        while True:
+            move = np.argmax(qvals)
+            if (board.is_possible((move // 3, move % 3))):
+                return move
+            else:
+                qvals[move] = -1.0
+
     def move(self, board: Board):
         over, _ = board.is_over()
         move = self.get_move(board)
@@ -55,11 +53,11 @@ class TDAgent(Player):
         assert (board.is_possible(action))
         assert (not over)
 
-        self.history.append(board.hash())
+        self.history.append((board.hash(), move))
         board.take_turn(action)
         over, winner = board.is_over()
         return (winner, board, over)
-    
+
     def final_result(self, result: int):
         if (result == -1 and self.side == -1) or (result == 1 and self.side == 1):
             final_value = RES_WIN
@@ -71,19 +69,19 @@ class TDAgent(Player):
         self.history.reverse()
         firstTime = True
 
-        for state in self.history:
-            # on first pass
-            if firstTime:
-                self.vtable[state] = final_value
+        for h in self.history:
+            qvals = self.qtable[h[0]]
+            if firstTime:  # First time through the loop
+                # set the reward of the final move to result reward
+                qvals[h[1]] = final_value
                 firstTime = False
             else:
-                # V(S) = V(S) + \alpha[R + \gamma*V(S') - V(S)]
-                self.vtable[state] = self.vtable[state] + self.alpha * (self.gamma * next_state - self.vtable[state])
-            next_state = self.vtable[state]
-        
-    def new_game(self, side: int):
+                qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_max - qvals[h[1]])
+            next_max = qvals[h[1]]
+
+    def new_game(self, side):
         self.side = side
         self.history = []
-    
+
     def set_training(self, training):
         self.training = training

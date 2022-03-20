@@ -56,6 +56,9 @@ class Board(object):
      (2, 0) | (2, 1) | (2, 2)
     '''
 
+    def print_board(self):
+        print(self.cells)
+
     def __init__(self, cells: numpy.array = None) -> None:
         # Use classic 3x3 size.
         self.size: int = 3
@@ -204,41 +207,6 @@ class Board(object):
             if i != self.size - 1:
                 result += ('-' * (2 + self.size * self.size)) + '\n'
         return result
-
-
-def get_all_states() -> typing.Tuple[typing.Set, typing.Set]:
-    '''
-    Devises all valid board states and computes hashes for each of them. Also
-    extracts terminal states useful for the update rule simplification.
-
-    Returns:
-        set: A set of all possible boards' hashes.
-        set: A set of hashes of all boards after a final turn, i.e. terminal
-            boards.
-    '''
-    boards = [Board()]
-    states = set()
-    terminal_states = set()
-    epoch = 0
-    while boards:
-        print(f'Epoch: {epoch}')
-        epoch += 1
-        next_generation = []
-        for board in boards:
-            board_hash = board.hash()
-            if board_hash in states:
-                continue
-            states.add(board_hash)
-            over, _ = board.is_over()
-            if over:
-                terminal_states.add(board_hash)
-                continue
-            for action in board.possible_actions():
-                next_board = copy.deepcopy(board)
-                next_board.take_turn(tuple(action))
-                next_generation.append(next_board)
-        boards = next_generation
-    return states, terminal_states
 
 
 class TicTacToe(object):

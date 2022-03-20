@@ -18,8 +18,7 @@ class QAgent(Player):
         self.training: bool = True
 
         # create qtable for each possible board state
-        self.qtable = np.empty(3 ** (3 ** 2 + 1))
-        self.qtable.fill(q_init)
+        self.qtable = np.full((3 ** (3 ** 2 + 1), 9), q_init)
 
         self.history = []
         self.alpha: float = alpha
