@@ -84,34 +84,20 @@ def eval_players(
     plt.savefig(output + ".png")
 
 
-<<<<<<< HEAD
-#train q agent   
-player1 = QAgent()
-player2 = QAgent()
-eval_players(player1, player2, 40, 200)
-
-# train tdagent
-# player1 = TDAgent()
-# player2 = TDAgent()
-# eval_players(player1, player2, 40, 200)
-=======
 # train q agent
-player1 = QAgent()
-player2 = QAgent()
-eval_players("qvq", player1, player2, 40, 200)
-player2 = BenchmarkPlayer()
-eval_players("qvqanalysis", player1, player2, 40, 200)
+# player1 = QAgent()
+# player2 = QAgent()
+# eval_players("qvq", player1, player2, 40, 200)
+# player2 = BenchmarkPlayer()
+# eval_players("qvqanalysis", player1, player2, 40, 200)
 
-player1 = QAgent()
-player2 = BenchmarkPlayer()
-eval_players("qvb", player1, player2, 40, 200)
-player2 = BenchmarkPlayer()
-eval_players("qvbanalysis", player1, player2, 40, 200)
->>>>>>> 68790466241a812ca8c6db8507c7fdea55a31624
+# player1 = QAgent()
+# player2 = BenchmarkPlayer()
+# eval_players("qvb", player1, player2, 40, 200)
+# player2 = BenchmarkPlayer()
+# eval_players("qvbanalysis", player1, player2, 40, 200)
 
 # train tdagent
-# player1 = TDAgent()
-# player2 = TDAgent()
-# eval_players(player1, player2, 40, 200)
-# player2 = BenchmarkPlayer()
-# eval_players(player1, player2, 40, 200)
+player1 = TDAgent()
+player2 = TDAgent()
+eval_players('tdvtd',player1, player2, 40, 200)

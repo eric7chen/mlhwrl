@@ -15,26 +15,37 @@ RES_LOSS = 0.0
 
 
 class TDAgent(Player):
-    def __init__(self):
+    def __init__(self,
+                 alpha: float =  0.9,
+                 gamma: float = 0.9,
+                 epsilon: float = 0.1,
+                 v_init: float = 0.6) -> None:
         self.side = None
-        self.alpha = 0.1
-        self.gamma = 0.95
-        self.epsilon = 0.1
-        self.vtable = numpy.zeros(3 ** (3 ** 2 + 1))
-        # history for applying reward at the end of an episode
+        self.training: bool = True
+        # create qtable for each possible board state
+        self.vtable = []
+        for i in range(3 ** (3 ** 2 + 1)):
+            self.vtable.append(v_init)
         self.history = []
+        self.alpha: float = alpha
+        self.gamma: float = gamma
+        self.epsilon: float = epsilon
+        self.v_init = v_init
+        super().__init__()
     
     def get_move(self, board: Board) -> int:
         possible = board.possible_actions()
         # take random move epsilon % of the time
-        if np.random.binomial(1, self.epsilon):
-            move = tuple(random.choice(possible))
+        if np.random.binomial(1, self.epsilon) and self.training:
+            np.random.shuffle(possible)
+            move = tuple(possible[0])
             return (3*move[0] + move[1])
         copies = [copy.deepcopy(board) for i in possible]
         for action, boardcopy in zip(possible, copies):
             boardcopy.take_turn(tuple(action))
         hashes = [boardcopy.hash() for boardcopy in copies]
         # move to state with best value
+        print(np.argmax(self.vtable[hashes]))
         move = possible[np.argmax(self.vtable[hashes])]
         return (3*move[0] + move[1])
     
@@ -49,12 +60,6 @@ class TDAgent(Player):
         board.take_turn(action)
         over, winner = board.is_over()
         return (winner, board, over)
-
-    def reset_explore(self):
-        self.exploration_rate = 0
-
-    def set_env(self, environment):
-        self.environment = environment
     
     def final_result(self, result: int):
         if (result == -1 and self.side == -1) or (result == 1 and self.side == 1):
@@ -65,19 +70,21 @@ class TDAgent(Player):
             final_value = RES_DRAW
 
         self.history.reverse()
-        next_val = -1.0
+        firstTime = True
 
         for h in self.history:
             # on first pass
-            if next_val < 0:
+            if firstTime:
                 self.vtable[h] = final_value
+                firstTime = False
             else:
                 # V(S) = V(S) + \alpha
                 self.vtable[h] = self.vtable[h] + self.alpha * (self.gamma * next_state - self.vtable[h])
             next_state = self.vtable[h]
         
-
-
     def new_game(self, side: int):
         self.side = side
         self.history = []
+    
+    def set_training(self, training):
+        self.training = training
