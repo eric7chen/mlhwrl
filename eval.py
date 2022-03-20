@@ -8,9 +8,11 @@ from game.tic_tac_toe import TicTacToe
 from rand_player import RandomPlayer
 from game.Player import Player
 from tdlearn import TDAgent
+from benchmark_player import BenchmarkPlayer
 
 PLAYER1 = 1
 PLAYER2 = -1
+
 
 def play_game(board: Board, player1: Player, player2: Player) -> int:
     player1Turn = True
@@ -20,19 +22,20 @@ def play_game(board: Board, player1: Player, player2: Player) -> int:
     winner = 0
     over = False
     while True:
-        if (over):
+        if over:
             player1.final_result(winner)
             player2.final_result(winner)
             return winner
-        if (player1Turn):
+        if player1Turn:
             (winner, _, over) = player1.move(board)
         else:
             (winner, _, over) = player2.move(board)
         player1Turn = not player1Turn
-        
 
 
-def battle(player1: Player, player2: Player, num_games: int = 10000, silent: bool = False):
+def battle(
+    player1: Player, player2: Player, num_games: int = 10000, silent: bool = False
+):
     board = Board()
     draw_count = 0
     wins_1 = 0
@@ -45,10 +48,20 @@ def battle(player1: Player, player2: Player, num_games: int = 10000, silent: boo
             wins_2 += 1
         else:
             draw_count += 1
-    print(f"after {num_games} game we have draws: {draw_count}, player1 wins: {wins_1}, player2 wins: {wins_2}")
+    print(
+        f"after {num_games} game we have draws: {draw_count}, player1 wins: {wins_1}, player2 wins: {wins_2}"
+    )
     return (wins_1, wins_2, draw_count)
 
-def eval_players(p1 : Player, p2 : Player, games_per_battle = 100, num_battles = 100, silent: bool = False):
+
+def eval_players(
+    output,
+    p1: Player,
+    p2: Player,
+    games_per_battle=100,
+    num_battles=100,
+    silent: bool = False,
+):
     p1_wins = []
     p2_wins = []
     draws = []
@@ -56,21 +69,22 @@ def eval_players(p1 : Player, p2 : Player, games_per_battle = 100, num_battles =
 
     for i in range(num_battles):
         p1win, p2win, draw = battle(p1, p2, games_per_battle, silent)
-        p1_wins.append(p1win*100.0/games_per_battle)
-        p2_wins.append(p2win*100.0/games_per_battle)
-        draws.append(draw*100.0/games_per_battle)
-        count.append(i*games_per_battle)
-      
+        p1_wins.append(p1win * 100.0 / games_per_battle)
+        p2_wins.append(p2win * 100.0 / games_per_battle)
+        draws.append(draw * 100.0 / games_per_battle)
+        count.append(i * games_per_battle)
+
     plt.figure()
-    plt.plot(count, draws, label='Draws')
-    plt.plot(count, p1_wins, label='Player 1 wins')
-    plt.plot(count, p2_wins, label='Player 2 wins')
-    plt.legend(shadow=True, fancybox=True, framealpha = 0.7)
-    plt.ylabel('Outcome %')
-    plt.xlabel('Training Iterations')
-    plt.savefig("myplot3.png")
+    plt.plot(count, draws, label="Draws")
+    plt.plot(count, p1_wins, label="Player 1 wins")
+    plt.plot(count, p2_wins, label="Player 2 wins")
+    plt.legend(shadow=True, fancybox=True, framealpha=0.7)
+    plt.ylabel("Outcome %")
+    plt.xlabel("Training Iterations")
+    plt.savefig(output + ".png")
 
 
+<<<<<<< HEAD
 #train q agent   
 player1 = QAgent()
 player2 = QAgent()
@@ -80,4 +94,24 @@ eval_players(player1, player2, 40, 200)
 # player1 = TDAgent()
 # player2 = TDAgent()
 # eval_players(player1, player2, 40, 200)
+=======
+# train q agent
+player1 = QAgent()
+player2 = QAgent()
+eval_players("qvq", player1, player2, 40, 200)
+player2 = BenchmarkPlayer()
+eval_players("qvqanalysis", player1, player2, 40, 200)
 
+player1 = QAgent()
+player2 = BenchmarkPlayer()
+eval_players("qvb", player1, player2, 40, 200)
+player2 = BenchmarkPlayer()
+eval_players("qvbanalysis", player1, player2, 40, 200)
+>>>>>>> 68790466241a812ca8c6db8507c7fdea55a31624
+
+# train tdagent
+# player1 = TDAgent()
+# player2 = TDAgent()
+# eval_players(player1, player2, 40, 200)
+# player2 = BenchmarkPlayer()
+# eval_players(player1, player2, 40, 200)
