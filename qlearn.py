@@ -16,10 +16,11 @@ class QAgent(Player):
                  q_init: float = 0.6) -> None:
         self.side = None
         self.training: bool = True
+
         # create qtable for each possible board state
-        self.qtable = []
-        for i in range(3 ** (3 ** 2 + 1)):
-            self.qtable.append(np.full(9, q_init))
+        self.qtable = np.empty(3 ** (3 ** 2 + 1))
+        self.qtable.fill(q_init)
+
         self.history = []
         self.alpha: float = alpha
         self.gamma: float = gamma
@@ -35,6 +36,8 @@ class QAgent(Player):
             np.random.shuffle(possible)
             move = tuple(possible[0])
             return (3*move[0] + move[1])
+        
+        #otherwise, take best action from qtable
         board_hash = board.hash()
         qvals = self.qtable[board_hash]
         while True:

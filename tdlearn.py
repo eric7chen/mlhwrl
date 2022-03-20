@@ -22,10 +22,9 @@ class TDAgent(Player):
                  v_init: float = 0.6) -> None:
         self.side = None
         self.training: bool = True
-        # create qtable for each possible board state
-        self.vtable = []
-        for i in range(3 ** (3 ** 2 + 1)):
-            self.vtable.append(v_init)
+        # create table for each possible board state
+        self.vtable = np.empty(3 ** (3 ** 2 + 1))
+        self.vtable.fill(v_init)
         self.history = []
         self.alpha: float = alpha
         self.gamma: float = gamma
@@ -35,18 +34,19 @@ class TDAgent(Player):
     
     def get_move(self, board: Board) -> int:
         possible = board.possible_actions()
+        
         # take random move epsilon % of the time
         if np.random.binomial(1, self.epsilon) and self.training:
             np.random.shuffle(possible)
             move = tuple(possible[0])
             return (3*move[0] + move[1])
+        
+        # otherwise take best move from possible choices
         copies = [copy.deepcopy(board) for i in possible]
         for action, boardcopy in zip(possible, copies):
             boardcopy.take_turn(tuple(action))
         hashes = [boardcopy.hash() for boardcopy in copies]
-        # move to state with best value
-        print(np.argmax(self.vtable[hashes]))
-        move = possible[np.argmax(self.vtable[hashes])]
+        move = tuple(possible[numpy.argmax(self.vtable[hashes])])
         return (3*move[0] + move[1])
     
     def move(self, board: Board):
