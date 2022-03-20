@@ -8,6 +8,7 @@ class HumanPlayer(Player):
         super().__init__()
 
     def move(self, board: Board):
+        
         pass
 
     def final_result(self, result: int):

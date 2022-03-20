@@ -1,6 +1,5 @@
 from typing import Tuple, final
 from game.Player import Player
-from game.tic_tac_toe import TicTacToe
 from game.tic_tac_toe import Board
 
 import numpy as np

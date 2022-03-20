@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
 
-from tic_tac_toe import Board
+from game.tic_tac_toe import Board
 
 
 class Player(ABC):
