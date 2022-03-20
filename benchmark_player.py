@@ -1,6 +1,7 @@
 from game.tic_tac_toe import Board
 from game.Player import Player
 import numpy as np
+from copy import deepcopy
 
 
 class BenchmarkPlayer(Player):
@@ -13,16 +14,18 @@ class BenchmarkPlayer(Player):
         possible_moves = board.possible_actions()
         np.random.shuffle(possible_moves)
         for i in possible_moves:
-            temp_board = board
-            if temp_board.is_possible(i):
-                temp_board.take_turn(i)
+            print(i)
+            temp_board = deepcopy(board)
+            move = (i[0], i[1])
+            if temp_board.is_possible(move):
+                temp_board.take_turn(move)
                 over, winner = temp_board.is_over()
                 if over:
-                    board.take_turn(i)
+                    board.take_turn(move)
                     over, winner = board.is_over()
                     return winner, board, over
 
-        board.take_turn(possible_moves[0])
+        board.take_turn((possible_moves[0][0], possible_moves[0][1]))
         over, winner = board.is_over()
         return winner, board, over
 
