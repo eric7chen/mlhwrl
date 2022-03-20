@@ -6,6 +6,7 @@ import random
 from game.tic_tac_toe import Board
 from game.tic_tac_toe import TicTacToe
 from game.Player import Player
+import numpy as np
 
 # rewards for win, draw, and loss
 RES_WIN = 1.0
@@ -26,7 +27,7 @@ class TDAgent(Player):
     def get_move(self, board: Board) -> int:
         possible = board.possible_actions()
         # take random move epsilon % of the time
-        if numpy.random.binomial(1, self.epsilon):
+        if np.random.binomial(1, self.epsilon):
             move = tuple(random.choice(possible))
             return (3*move[0] + move[1])
         copies = [copy.deepcopy(board) for i in possible]
@@ -34,7 +35,7 @@ class TDAgent(Player):
             boardcopy.take_turn(tuple(action))
         hashes = [boardcopy.hash() for boardcopy in copies]
         # move to state with best value
-        move = possible[numpy.argmax(self.vtable[hashes])]
+        move = possible[np.argmax(self.vtable[hashes])]
         return (3*move[0] + move[1])
     
     def move(self, board: Board):
@@ -62,8 +63,6 @@ class TDAgent(Player):
             final_value = RES_LOSS
         elif (result == 0):
             final_value = RES_DRAW
-        else:
-            raise ValueError("Unexpected game result")
 
         self.history.reverse()
         next_val = -1.0
@@ -73,7 +72,8 @@ class TDAgent(Player):
             if next_val < 0:
                 self.vtable[h] = final_value
             else:
-                self.vtable[h] = self.vtable[h] + self.alpha * (final_value + self.gamma * next_state - self.vtable[h])
+                # V(S) = V(S) + \alpha
+                self.vtable[h] = self.vtable[h] + self.alpha * (self.gamma * next_state - self.vtable[h])
             next_state = self.vtable[h]
         
 

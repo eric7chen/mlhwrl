@@ -72,12 +72,12 @@ def eval_players(p1 : Player, p2 : Player, games_per_battle = 100, num_battles =
 
 
 #train q agent   
-# player1 = QAgent()
-# player2 = QAgent()
-# eval_players(player1, player2, 40, 200)
+player1 = QAgent()
+player2 = QAgent()
+eval_players(player1, player2, 40, 200)
 
 # train tdagent
-player1 = TDAgent()
-player2 = TDAgent()
-eval_players(player1, player2, 40, 200)
+# player1 = TDAgent()
+# player2 = TDAgent()
+# eval_players(player1, player2, 40, 200)
 

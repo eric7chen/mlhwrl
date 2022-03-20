@@ -12,8 +12,10 @@ class QAgent(Player):
     def __init__(self,
                  alpha: float =  0.9,
                  gamma: float = 0.9,
+                 epsilon: float = 0.1,
                  q_init: float = 0.6) -> None:
         self.side = None
+        self.training: bool = True
         # create qtable for each possible board state
         self.qtable = []
         for i in range(3 ** (3 ** 2 + 1)):
@@ -21,11 +23,18 @@ class QAgent(Player):
         self.history = []
         self.alpha: float = alpha
         self.gamma: float = gamma
+        self.epsilon: float = epsilon
         self.q_init = q_init
         super().__init__()
 
 
     def get_move(self, board: Board) -> int:
+        possible = board.possible_actions()
+        # take random move epsilon % of the time
+        if np.random.binomial(1, self.epsilon) and self.training:
+            np.random.shuffle(possible)
+            move = tuple(possible[0])
+            return (3*move[0] + move[1])
         board_hash = board.hash()
         qvals = self.qtable[board_hash]
         while True:
@@ -54,21 +63,23 @@ class QAgent(Player):
             final_value = RES_LOSS
         elif (result == 0):
             final_value = RES_DRAW
-        else:
-            raise ValueError("Unexpected game result")
 
         self.history.reverse()
-        next_max = -1.0
+        firstTime = True
 
         for h in self.history:
             qvals = self.qtable[h[0]]
-            if next_max < 0:  # First time through the loop
+            if firstTime:  # First time through the loop
+                # set the reward of the final move to result reward
                 qvals[h[1]] = final_value
+                firstTime = False
             else:
-                qvals[h[1]] = qvals[h[1]] * (
-                    1.0 - self.alpha) + self.alpha * self.gamma * next_max
+                qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_max - qvals[h[1]])
             next_max = max(qvals)
 
     def new_game(self, side):
         self.side = side
         self.history = []
+
+    def set_training(self, training):
+        self.training = training

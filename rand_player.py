@@ -36,7 +36,6 @@ class RandomPlayer(Player):
                     return winner, board, over
                 else:
                     index -= 1
-        print('fuuuuuu')
 
     def final_result(self, result: int):
         """
