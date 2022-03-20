@@ -132,11 +132,11 @@ def eval_tdplayers(games_per_battle = 100, num_battles = 200):
 
 
 #train q agent   
-# player1 = QAgent()
-# player2 = QAgent()
-# eval_qplayers(player1, player2, 40, 200)
+player1 = QAgent()
+player2 = QAgent()
+eval_qplayers(player1, player2, 40, 200)
 
 # train tdagent
 
-eval_tdplayers(20, 100)
+#eval_tdplayers(20, 100)
 

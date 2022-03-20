@@ -11,28 +11,23 @@ RES_LOSS = 0.0
 class QAgent(Player):
     def __init__(self,
                  alpha: float =  0.9,
-                 gamma: float = 0.95,
+                 gamma: float = 0.9,
                  q_init: float = 0.6) -> None:
         self.side = None
-        self.qtable = {}
+        # create qtable for each possible board state
+        self.qtable = []
+        for i in range(3 ** (3 ** 2 + 1)):
+            self.qtable.append(np.full(9, q_init))
         self.history = []
         self.alpha: float = alpha
         self.gamma: float = gamma
         self.q_init = q_init
         super().__init__()
 
-    def get_q(self, board_hash: int) -> np.ndarray:
-        if board_hash in self.qtable:
-            qvals = self.qtable[board_hash]
-        else:
-            qvals = np.full(9, self.q_init)
-            self.qtable[board_hash] = qvals
-        
-        return qvals
 
     def get_move(self, board: Board) -> int:
         board_hash = board.hash()
-        qvals = self.get_q(board_hash)
+        qvals = self.qtable[board_hash]
         while True:
             move = np.argmax(qvals)
             if (board.is_possible((move // 3, move % 3))):
@@ -66,12 +61,12 @@ class QAgent(Player):
         next_max = -1.0
 
         for h in self.history:
-            qvals = self.get_q(h[0])
+            qvals = self.qtable[h[0]]
             if next_max < 0:  # First time through the loop
                 qvals[h[1]] = final_value
             else:
                 qvals[h[1]] = qvals[h[1]] * (
-                            1.0 - self.alpha) + self.alpha * self.gamma * next_max
+                    1.0 - self.alpha) + self.alpha * self.gamma * next_max
             next_max = max(qvals)
 
     def new_game(self, side):
