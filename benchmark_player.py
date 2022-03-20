@@ -14,7 +14,6 @@ class BenchmarkPlayer(Player):
         possible_moves = board.possible_actions()
         np.random.shuffle(possible_moves)
         for i in possible_moves:
-            print(i)
             temp_board = deepcopy(board)
             move = (i[0], i[1])
             if temp_board.is_possible(move):
