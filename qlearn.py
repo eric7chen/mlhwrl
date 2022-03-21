@@ -77,6 +77,7 @@ class QAgent(Player):
                 firstTime = False
             else:
                 qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_max - qvals[h[1]])
+            # next_q is the argmax of the current states action values
             next_max = max(qvals)
 
     def new_game(self, side):
