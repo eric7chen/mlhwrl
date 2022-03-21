@@ -2,7 +2,6 @@ import argparse
 import copy
 from hashlib import new
 from game.tic_tac_toe import Board
-from game.tic_tac_toe import TicTacToe
 from game.Player import Player
 import numpy as np
 

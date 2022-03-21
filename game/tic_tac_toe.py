@@ -112,22 +112,3 @@ class Board(object):
             if i != self.size - 1:
                 result += ("-" * (2 + self.size * self.size)) + "\n"
         return result
-
-
-class TicTacToe(object):
-    def __init__(self):
-        self.board: Board = Board()
-
-    def step(self, action: typing.Tuple[int, int]) -> typing.Tuple[int, Board, bool]:
-        over, _ = self.board.is_over()
-        assert self.board.is_possible(action)
-        assert not over
-        self.board.take_turn(action)
-        over, winner = self.board.is_over()
-        return winner, self.board, over
-
-    def __repr__(self):
-        return self.board.__repr__()
-
-    def reset(self):
-        self.__init__()

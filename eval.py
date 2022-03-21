@@ -5,8 +5,6 @@ from HumanPlayer import HumanPlayer
 from qlearn import QAgent
 
 from game.tic_tac_toe import Board
-from game.tic_tac_toe import TicTacToe
-from rand_player import RandomPlayer
 from game.Player import Player
 from sarsalearn import SarsaAgent
 from tdlearn import TDAgent
