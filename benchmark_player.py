@@ -10,9 +10,13 @@ class BenchmarkPlayer(Player):
         super().__init__()
 
     def move(self, board: Board):
-        index = np.random.randint(len(board.possible_actions()))
+        # get moves
         possible_moves = board.possible_actions()
+
+        # shuffle moves
         np.random.shuffle(possible_moves)
+
+        # find if one is winning
         for i in possible_moves:
             temp_board = deepcopy(board)
             move = (i[0], i[1])
@@ -24,6 +28,7 @@ class BenchmarkPlayer(Player):
                     over, winner = board.is_over()
                     return winner, board, over
 
+        # otherwise return random move (first index)
         board.take_turn((possible_moves[0][0], possible_moves[0][1]))
         over, winner = board.is_over()
         return winner, board, over

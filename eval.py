@@ -87,45 +87,49 @@ def eval_players(
 
 
 # train q agent
-# player1 = QAgent()
-# player2 = QAgent()
-# eval_players("qvq", player1, player2, 40, 200)
+player1 = QAgent()
+player2 = QAgent()
+eval_players("qvq", player1, player2, 40, 200)
 
 # play q agent against benchmark
-# player1.set_training(False)
-# player2 = BenchmarkPlayer()
-# eval_players("qvqanalysis", player1, player2, 40, 200)
+player1.set_training(False)
+player2 = BenchmarkPlayer()
+eval_players("qvqanalysis", player1, player2, 40, 200)
 
 # train q agent against benchmark
-# player1 = QAgent()
-# player2 = BenchmarkPlayer()
+player1 = QAgent()
+player2 = BenchmarkPlayer()
 
 # play q agent against benchmark
-# player1.set_training(False)
-# eval_players("qvb", player1, player2, 40, 200)
-# player2 = BenchmarkPlayer()
-# eval_players("qvbanalysis", player1, player2, 40, 200)
+player1.set_training(False)
+eval_players("qvb", player1, player2, 40, 200)
+player2 = BenchmarkPlayer()
+eval_players("qvbanalysis", player1, player2, 40, 200)
 
 # train tdagent
 player1 = TDAgent()
 player2 = TDAgent()
-eval_players('tdvtd',player1, player2, 40, 200)
-
-# play td agent aginst human
-player1.set_training(False)
-player2 = HumanPlayer()
-eval_players('tdvh', player1, player2, 1, 3)
+eval_players("tdvtd", player1, player2, 40, 200)
 
 # play td agent aginst benchmark
 player1.set_training(False)
 player2 = BenchmarkPlayer()
-eval_players("tdvtd analysis", player1, player2, 40, 200)
+eval_players("tdvtdanalysis", player1, player2, 40, 200)
 
 # train sarsa agent
-# player1 = SarsaAgent()
-# player2 = SarsaAgent()
-# eval_players('svs', player1, player2, 40, 200)
+player1 = SarsaAgent()
+player2 = SarsaAgent()
+eval_players("svs", player1, player2, 40, 200)
 
-# player1.set_training(False)
-# player2 = BenchmarkPlayer()
-# eval_players('svb', player1, player2, 40, 200)
+player1.set_training(False)
+player2 = BenchmarkPlayer()
+eval_players("svsanalysis", player1, player2, 40, 200)
+
+# train sarsa agent against benchmark
+player1 = SarsaAgent()
+player2 = BenchmarkPlayer()
+eval_players("svb", player1, player2, 40, 200)
+
+player1.set_training(False)
+player2 = BenchmarkPlayer()
+eval_players("svbanalysis", player1, player2, 40, 200)
