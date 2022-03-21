@@ -76,8 +76,9 @@ class SarsaAgent(Player):
                 qvals[h[1]] = final_value
                 firstTime = False
             else:
-                qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_max - qvals[h[1]])
-            next_max = qvals[h[1]]
+                qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_q - qvals[h[1]])
+            # next_q is the current state's action value pair
+            next_q = qvals[h[1]]
 
     def new_game(self, side):
         self.side = side

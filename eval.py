@@ -107,24 +107,25 @@ def eval_players(
 # eval_players("qvbanalysis", player1, player2, 40, 200)
 
 # train tdagent
-# player1 = TDAgent()
-# player2 = TDAgent()
-# eval_players('tdvtd',player1, player2, 10, 40)
+player1 = TDAgent()
+player2 = TDAgent()
+eval_players('tdvtd',player1, player2, 40, 200)
 
-# player1.set_training(False)
-# player2 = HumanPlayer()
-# eval_players('tdvh', player1, player2, 1, 3)
+# play td agent aginst human
+player1.set_training(False)
+player2 = HumanPlayer()
+eval_players('tdvh', player1, player2, 1, 3)
 
 # play td agent aginst benchmark
-# player1.set_training(False)
-# player2 = BenchmarkPlayer()
-# eval_players("tdvtd analysis", player1, player2, 40, 200)
-
-# train sarsa agent
-player1 = SarsaAgent()
-player2 = SarsaAgent()
-eval_players('svs', player1, player2, 40, 200)
-
 player1.set_training(False)
 player2 = BenchmarkPlayer()
-eval_players('svb', player1, player2, 40, 200)
+eval_players("tdvtd analysis", player1, player2, 40, 200)
+
+# train sarsa agent
+# player1 = SarsaAgent()
+# player2 = SarsaAgent()
+# eval_players('svs', player1, player2, 40, 200)
+
+# player1.set_training(False)
+# player2 = BenchmarkPlayer()
+# eval_players('svb', player1, player2, 40, 200)

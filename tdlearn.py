@@ -79,6 +79,7 @@ class TDAgent(Player):
             else:
                 # V(S) = V(S) + \alpha[R + \gamma*V(S') - V(S)]
                 self.vtable[state] = self.vtable[state] + self.alpha * (self.gamma * next_state - self.vtable[state])
+            # next_state is the value for the current state
             next_state = self.vtable[state]
         
     def new_game(self, side: int):
