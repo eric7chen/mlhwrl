@@ -14,6 +14,7 @@ class QAgent(Player):
                  gamma: float = 0.9,
                  epsilon: float = 0.1,
                  q_init: float = 0.6) -> None:
+        
         self.side = None
         self.training: bool = True
 
@@ -59,6 +60,10 @@ class QAgent(Player):
         return (winner, board, over)
 
     def final_result(self, result: int):
+        # if not training, dont update the q-table
+        if self.training == False:
+            return
+
         if (result == -1 and self.side == -1) or (result == 1 and self.side == 1):
             final_value = RES_WIN
         elif (result == -1 and self.side == 1) or (result == 1 and self.side == -1):
@@ -76,6 +81,8 @@ class QAgent(Player):
                 qvals[h[1]] = final_value
                 firstTime = False
             else:
+                # Q-learn update
+                # Q(S,A) = Q(S,A) + \alpha[R + \gamma*argmax(Q(S',a)) - Q(S,A)]
                 qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_max - qvals[h[1]])
             # next_q is the argmax of the current states action values
             next_max = max(qvals)

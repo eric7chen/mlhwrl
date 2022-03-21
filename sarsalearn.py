@@ -59,6 +59,10 @@ class SarsaAgent(Player):
         return (winner, board, over)
 
     def final_result(self, result: int):
+        # if not training, dont update the q-table
+        if self.training == False:
+            return
+        
         if (result == -1 and self.side == -1) or (result == 1 and self.side == 1):
             final_value = RES_WIN
         elif (result == -1 and self.side == 1) or (result == 1 and self.side == -1):
@@ -76,6 +80,8 @@ class SarsaAgent(Player):
                 qvals[h[1]] = final_value
                 firstTime = False
             else:
+                # Sarsa Update
+                # Q(S,A) = Q(S,A) + \alpha[R + \gamma*Q(S',A') - Q(S,A)]
                 qvals[h[1]] = qvals[h[1]] + self.alpha * (self.gamma * next_q - qvals[h[1]])
             # next_q is the current state's action value pair
             next_q = qvals[h[1]]

@@ -17,10 +17,11 @@ class TDAgent(Player):
         alpha: float = 0.1,
         gamma: float = 0.9,
         epsilon: float = 0.1,
-        v_init: float = 0.05,
-    ) -> None:
+        v_init: float = 0.05) -> None:
+
         self.side = None
         self.training: bool = True
+
         # create table for each possible board state
         self.vtable = np.empty([3 ** (3 ** 2 + 1)])
         self.vtable.fill(v_init)
@@ -61,6 +62,10 @@ class TDAgent(Player):
         return (winner, board, over)
 
     def final_result(self, result: int):
+        # if not training, dont update the v-table
+        if self.training == False:
+            return
+
         if (result == -1 and self.side == -1) or (result == 1 and self.side == 1):
             final_value = RES_WIN
         elif (result == -1 and self.side == 1) or (result == 1 and self.side == -1):
