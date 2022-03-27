@@ -41,7 +41,7 @@ class SarsaAgent(Player):
         qvals = self.qtable[board_hash]
         while True:
             move = np.argmax(qvals)
-            if (board.is_possible((move // 3, move % 3))):
+            if (board.is_possible(tuple(move // 3, move % 3))):
                 return move
             else:
                 qvals[move] = -1.0

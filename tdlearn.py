@@ -43,9 +43,10 @@ class TDAgent(Player):
 
         # otherwise take best move from possible choices
         copies = [copy.deepcopy(board) for i in possible]
-        for action, boardcopy in zip(possible, copies):
-            boardcopy.take_turn(tuple(action))
+        for i in range(len(possible)):
+            copies[i].take_turn(tuple(possible[i]))
         hashes = [boardcopy.hash() for boardcopy in copies]
+        
         move = tuple(possible[np.argmax(self.vtable[hashes])])
         return 3 * move[0] + move[1]
 
